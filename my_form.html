@@ -1,0 +1,11 @@
+<form id="my_form" action="/my_form" method="POST" data-oid="{{ form.oid }}">
+    {{ form.csrf_token }}
+    <p>{{ form.hello }}</p>
+    <div>
+        <label for="name">{{ form.name.label }}</label>
+        {{ form.name }}
+    </div>
+    <div>
+        <input type="submit" value="Submit"/>
+    </div>
+</form>
