@@ -1,27 +1,20 @@
-import jinja2
+from datetime import datetime
 from flask import Flask, render_template, request
-# from flask_wtf import FlaskForm
-from wtforms import Form, StringField
+from flask.views import View
+from flask_wtf import FlaskForm
+from wtforms import StringField
 from wtforms.validators import DataRequired
 
 
 app = Flask(__name__, static_folder='', template_folder='')
+app.config['SECRET_KEY'] = 'secret'
 
 
-class HTMXForm:
-    def __init__(self, *args, **kwargs):
-        super(HTMXForm, self).__init__(*args, **kwargs)
-
-    def render(self):
-        return jinja2.utils.markupsafe.Markup(render_template(self.template, form=self))
-
-
-class MyForm(HTMXForm, Form):
+class MyForm(FlaskForm):
     id = 'my_form'
-    template="my_form.html"
     render_kw = {
         "hx-trigger": "keyup changed delay:1000ms",
-        "hx-post": "/wtforms_htmx",
+        "hx-post": "/my_view",
         "hx-swap": "outerHTML",
         "hx-target": f"#{id}"
     }
@@ -34,15 +27,20 @@ class MyForm(HTMXForm, Form):
         return f"Hello {self.prefix.data or ''} {self.name.data or 'stranger'}"
 
 
-@app.route("/wtforms_htmx", methods=['POST'])
-def wtforms_htmx():
-    form = MyForm(formdata=request.form)
-    return form.render()
+class MyView(View):
+    def render_form(self):
+        form = MyForm(name="default")
+        return render_template('my_form.html', form=form)
+
+    def render_view(self):
+        now = datetime.now()
+        return render_template('my_view.html', view=self, now=now)
+
+    def dispatch_request(self):
+        htmx_target = request.headers.get('HX-Target')
+        if htmx_target and htmx_target.endswith('form'):
+            return self.render_form()
+        return self.render_view()
 
 
-@app.route('/my_form', methods=['GET', 'POST'])
-def my_form():
-    form = MyForm(name="default")
-    # if form.validate_on_submit():
-    #     return redirect('/my_form')
-    return render_template('demo.html', form=form)
+app.add_url_rule('/my_view', view_func=MyView.as_view('my_view'), methods=['GET','POST'])

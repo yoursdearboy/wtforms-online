@@ -1,0 +1,14 @@
+<html>
+<head>
+    <!-- htmx -->
+    <script src="https://unpkg.com/htmx.org@1.8.4"></script>
+</head>
+<body>
+    <div id="my_view">
+        <h1>Welcome</h1>
+        <p>Now is {{ now }}</p>
+        {{ view.render_form() | safe }}
+        <button hx-post="/my_view" hx-target="#my_view">Refresh view</button>
+    </div>
+</body>
+</html>
