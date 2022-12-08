@@ -6,8 +6,6 @@ name = "pypi"
 [packages]
 flask = "*"
 flask-wtf = "*"
-flask-socketio = "*"
-blinker = "*"
 
 [dev-packages]
 pylint = "*"

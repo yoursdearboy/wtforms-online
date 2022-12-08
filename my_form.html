@@ -1,9 +1,13 @@
-<form id="my_form" action="/my_form" method="POST" data-oid="{{ form.oid }}">
+<form id="{{ form.id }}" action="/my_form" method="POST">
     {{ form.csrf_token }}
     <p>{{ form.hello }}</p>
     <div>
         <label for="name">{{ form.name.label }}</label>
         {{ form.name }}
+    </div>
+    <div>
+        <label form="prefix">{{ form.prefix.label }}</label>
+        {{ form.prefix }}
     </div>
     <div>
         <input type="submit" value="Submit"/>
